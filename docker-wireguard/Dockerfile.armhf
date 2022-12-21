@@ -1,4 +1,4 @@
-FROM ubuntu-base:test
+FROM ubuntu-base:dev
 
 # set version label
 ARG BUILD_DATE
