@@ -91,8 +91,16 @@ RUN \
 	curl \
 	patch \
 	tzdata \
+	ifupdown \
+	iproute2 \
+	iptables \
+	iputils-ping \
+	net-tools \
+	openresolv \
+	ldnsutils \
 	tinyproxy \
-	wireguard && \
+	wireguard \
+	wireguard-tools && \
  echo "**** generate locale ****" && \
  locale-gen en_US.UTF-8 && \
  echo "**** create abc user and make our folders ****" && \
@@ -106,7 +114,8 @@ RUN \
  patch -u /etc/s6/init/init-stage2 -i /tmp/patch/etc/s6/init/init-stage2.patch && \
  echo "**** cleanup ****" && \
  apt-get remove -y patch && \
- apt-get autoremove && \
+ export SUDO_FORCE_REMOVE=yes && \
+ apt-get -y autoremove && \
  apt-get clean && \
  rm -rf \
 	/tmp/* \
