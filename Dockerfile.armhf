@@ -126,7 +126,9 @@ RUN \
 	/var/lib/apt/lists/* \
 	/var/tmp/*
 
-# add local files
+
 COPY root/ /
+
+EXPOSE 8888/udp
 
 ENTRYPOINT ["/init"]
