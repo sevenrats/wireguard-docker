@@ -1,0 +1,40 @@
+---
+version: "3"
+services:
+  vpn:
+    image: wireguard:latest
+    container_name: vpn
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - ./config/vpn/wg0.conf:/config/wg0.conf:Z
+      - /lib/modules:/lib/modules:ro
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    dns:
+      - 10.128.0.1
+    ports:
+      - 80:80
+      - 443:443
+      - 8096:8096 # for jfin api
+    extra_hosts:
+      - firewatch:127.0.0.1
+    networks:
+      service:
+        ipv4_address: 172.20.0.20
+    restart: unless-stopped
+
+networks:
+  service:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
