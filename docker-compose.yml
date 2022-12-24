@@ -6,7 +6,6 @@ services:
     container_name: vpn
     cap_add:
       - NET_ADMIN
-      - SYS_MODULE
     security_opt:
       - no-new-privileges:true
     environment:
@@ -23,9 +22,7 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 8096:8096 # for jfin api
-    extra_hosts:
-      - firewatch:127.0.0.1
+      #- 8888:8888 # OR use proxy http://172.20.0.20:8888
     networks:
       service:
         ipv4_address: 172.20.0.20
