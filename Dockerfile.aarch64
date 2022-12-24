@@ -18,6 +18,11 @@ RUN \
   apk add --no-cache \
     bash \
     curl \
+    curl-dev \
+    gcc \
+    git \
+    make \
+    musl-dev \
     patch \
     tar \
     tzdata \
@@ -35,7 +40,14 @@ RUN \
   tar xf \
     /rootfs.tar.xz -C \
     /root-out && \
-  sed -i -e 's/^root::/root:!:/' /root-out/etc/shadow
+  sed -i -e 's/^root::/root:!:/' /root-out/etc/shadow && \
+# build ip checker
+  git clone https://github.com/sevenrats/fastip-c.git && \
+  cd fastip-c && \
+  make && \
+  mv fastip /root-out/usr/bin && \
+  cd .. && \
+  rm -r fastip-c
 
 # set version for s6 overlay
 ARG S6_OVERLAY_VERSION="3.1.2.1"
@@ -104,10 +116,7 @@ RUN \
     /run/tinyproxy/ && \
   touch /run/tinyproxy/tinyproxy.pid && \
   echo "**** patching wg-quick for alpine ****" && \
-  sed s/\&\&\ cmd\ sysctl\ -q\ net.ipv4.conf.all.src_valid_mark=1//g /usr/bin/wg-quick > /usr/bin/wg-quick-patched && \
-  rm /usr/bin/wg-quick && \
-  mv /usr/bin/wg-quick-patched /usr/bin/wg-quick && \
-  chmod +x /usr/bin/wg-quick && \
+  sed -i '/\[\[ $proto == -4 \]\] && cmd sysctl -q net\.ipv4\.conf\.all\.src_valid_mark=1/d' /usr/bin/wg-quick && \
   echo "**** cleanup ****" && \
   rm -rf \
     /tmp/*
