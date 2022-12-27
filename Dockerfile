@@ -49,32 +49,18 @@ RUN \
   cd .. && \
   rm -r fastip-c
 
-# set version for s6 overlay
-ARG S6_OVERLAY_VERSION="3.1.2.1"
-ARG S6_OVERLAY_ARCH="x86_64"
-
-# add s6 overlay
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-RUN tar -C /root-out -Jxpf /tmp/s6-overlay-noarch.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz /tmp
-RUN tar -C /root-out -Jxpf /tmp/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz
-
-# add s6 optional symlinks
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz /tmp
-RUN tar -C /root-out -Jxpf /tmp/s6-overlay-symlinks-noarch.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz /tmp
-RUN tar -C /root-out -Jxpf /tmp/s6-overlay-symlinks-arch.tar.xz
-
 # Runtime stage
 FROM scratch
 COPY --from=rootfs-stage /root-out/ /
 ARG BUILD_DATE
 ARG VERSION
-ARG MODS_VERSION="v3"
-LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
-LABEL maintainer="TheLamer"
+LABEL	maintainer="sevenrats" \
+		build-date=$BUILD_DATE \
+		name="Electrum-NMC" \
+		description="Electrum-NMC with JSON-RPC enabled" \
+		version=$VERSION \
+		license="MIT"
 
-ADD --chmod=744 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/docker-mods.${MODS_VERSION}" "/docker-mods"
 
 # environment variables
 ENV PS1="$(whoami)@$(hostname):$(pwd)\\$ " \
@@ -90,6 +76,7 @@ RUN \
     alpine-release \
     bash \
     ca-certificates \
+    catatonit \
     coreutils \
     curl \
     jq \
@@ -126,4 +113,4 @@ COPY root/ /
 
 EXPOSE 8888/udp
 
-ENTRYPOINT ["/init"]
+ENTRYPOINT ["catatonit", "/entrypoint.sh"]
