@@ -13,9 +13,9 @@ busybox,\
 libc-utils,\
 xz
 
-# install packages
 RUN \
-  apk add --no-cache \
+# install packages
+apk --no-cache add --virtual \
     bash \
     curl \
     curl-dev \
@@ -26,10 +26,8 @@ RUN \
     patch \
     tar \
     tzdata \
-    xz
-
+    xz && \
 # fetch builder script from gliderlabs
-RUN \
   curl -o \
   /mkimage-alpine.bash -L \
     https://raw.githubusercontent.com/gliderlabs/docker-alpine/master/builder/scripts/mkimage-alpine.bash && \
@@ -65,10 +63,7 @@ LABEL	maintainer="sevenrats" \
 # environment variables
 ENV PS1="$(whoami)@$(hostname):$(pwd)\\$ " \
 HOME="/root" \
-TERM="xterm" \
-S6_CMD_WAIT_FOR_SERVICES_MAXTIME="0" \
-S6_VERBOSITY=1 \
-S6_STAGE2_HOOK=/docker-mods
+TERM="xterm"
 
 RUN \
   echo "**** install runtime packages ****" && \
