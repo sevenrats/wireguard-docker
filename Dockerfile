@@ -15,7 +15,7 @@ xz
 
 RUN \
 # install packages
-apk --no-cache add --virtual \
+apk --no-cache add \
     bash \
     curl \
     curl-dev \

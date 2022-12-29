@@ -1,21 +1,27 @@
 #!/usr/bin/env bash
 
-# Proxy signals
+# Proxy Signals
+sp_processes=("tinyproxy") # These are processes that will receive all signals that aren't overloaded
+. ./signalproxy.sh
+
+# Overload specific handlers if you want to
+    # In this case lets overload all termination signals so that we can down wg0.
 _term() { 
-  echo "Caught SIGTERM signal!"
+  echo "Caught a termination signal!"
   wg-quick down wg0
   pkill -TERM tinyproxy
-  pkill -TERM -P1
-  exit 0
 }
 
 trap _term SIGTERM
+trap _term SIGINT
+trap _term SIGQUIT
+trap _term SIGHUP
 
-# Up configuration
-# TODO: configure resolv conf
-# TODO: parse conf files and add up/down scripts.
+# Configure stuff
+    # e.g., ingest and template configs
 
-# Run application
-wg-quick up wg0 &
-tinyproxy -dc /etc/tinyproxy/tinyproxy.conf &
-wait -n ${!}
+#Launch App
+wg-quick up wg0 &&
+tinyproxy -dc /etc/tinyproxy/tinyproxy.conf & \
+wait -n
+
