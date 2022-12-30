@@ -9,7 +9,7 @@ S6-overlay has been removed in favor of catatonit + multiservice signal proxying
 
 While config ingestion is under construction, please mount your config directory directly into /etc/wireguard and define your vpn DNS in your docker up command.
 
-If you would like to use your custom tinyproxy config, mount it over the default one at /etc/tinyproxy/tinyproxy.conf
+If you would like to use your custom tinyproxy config, mount it over the default one at /data/tinyproxy/tinyproxy.conf
 
 It is advisable to manually modify the tinyproxy configuration to deny access from the VPN adapter until a script is implemented to do so.
 

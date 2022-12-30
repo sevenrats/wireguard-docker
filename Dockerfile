@@ -89,7 +89,7 @@ RUN \
 	  wireguard-tools && \
   echo "**** create abc user and make our folders ****" && \
   groupmod -g 1000 users && \
-  useradd -u 911 -U -d /config -s /bin/false abc && \
+  useradd -u 911 -U -d /data -s /bin/false abc && \
   usermod -G users abc && \
   mkdir -p \
     /app \
@@ -100,7 +100,7 @@ RUN \
   echo "**** patching wg-quick for alpine ****" && \
   sed -i '/\[\[ $proto == -4 \]\] && cmd sysctl -q net\.ipv4\.conf\.all\.src_valid_mark=1/d' /usr/bin/wg-quick && \
   cd / && \
-	wget https://github.com/sevenrats/signalproxy.sh/blob/main/signalproxy.sh && \
+	wget https://raw.githubusercontent.com/sevenrats/signalproxy.sh/main/signalproxy.sh && \
   echo "**** cleanup ****" && \
   rm -rf \
     /tmp/*

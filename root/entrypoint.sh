@@ -2,7 +2,7 @@
 
 # Proxy Signals
 sp_processes=("tinyproxy") # These are processes that will receive all signals that aren't overloaded
-. ./signalproxy.sh
+. /signalproxy.sh
 
 # Overload specific handlers if you want to
     # In this case lets overload all termination signals so that we can down wg0.
@@ -18,10 +18,9 @@ trap _term SIGQUIT
 trap _term SIGHUP
 
 # Configure stuff
-    # e.g., ingest and template configs
+    #TODO ingest and template configs
 
 #Launch App
 wg-quick up wg0 &&
-tinyproxy -dc /etc/tinyproxy/tinyproxy.conf & \
+tinyproxy -dc /data/tinyproxy/tinyproxy.conf & \
 wait -n
-
