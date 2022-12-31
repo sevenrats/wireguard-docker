@@ -106,6 +106,8 @@ RUN \
   touch /run/tinyproxy/tinyproxy.pid && \
   echo "**** patching wg-quick for alpine ****" && \
   sed -i '/\[\[ $proto == -4 \]\] && cmd sysctl -q net\.ipv4\.conf\.all\.src_valid_mark=1/d' /usr/bin/wg-quick && \
+  rm -rf /etc/wireguard && \
+  ln -s /data/wireguard /etc/wireguard && \
   cd / && \
 	wget https://raw.githubusercontent.com/sevenrats/signalproxy.sh/main/signalproxy.sh && \
   echo "**** cleanup ****" && \
