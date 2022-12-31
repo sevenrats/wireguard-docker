@@ -87,18 +87,16 @@ RUN \
     ldns-tools \
     tinyproxy \
 	  wireguard-tools && \
-  echo "**** create abc user and make our folders ****" && \
-  groupmod -g 1000 users && \
-  useradd -u 911 -U -d /data -s /bin/false abc && \
-  usermod -G users abc && \
   mkdir -p \
     /app \
     /config \
     /defaults \
-    /run/tinyproxy/ && \
+    /run/tinyproxy/ /run/resolvconf && \
   touch /run/tinyproxy/tinyproxy.pid && \
   echo "**** patching wg-quick for alpine ****" && \
   sed -i '/\[\[ $proto == -4 \]\] && cmd sysctl -q net\.ipv4\.conf\.all\.src_valid_mark=1/d' /usr/bin/wg-quick && \
+  rm -rf /etc/wireguard && \
+  ln -s /data/wireguard /etc/wireguard && \
   cd / && \
 	wget https://raw.githubusercontent.com/sevenrats/signalproxy.sh/main/signalproxy.sh && \
   echo "**** cleanup ****" && \
