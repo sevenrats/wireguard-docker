@@ -1,3 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-tinyproxy -dc /etc/tinyproxy/tinyproxy.conf
