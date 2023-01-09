@@ -2,7 +2,7 @@
 version: "3"
 services:
   vpn:
-    image: wireguard
+    image: wireguard:latest
     container_name: vpn
     cap_add:
       - NET_ADMIN
