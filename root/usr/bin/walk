@@ -1,0 +1,36 @@
+#!/bin/bash
+# this doesn't work right now. eventually you will be able to announce
+# the vpn to "walk" to another endpoint and port, or to report that
+# the endpoint has changed for another reason. services that use this
+# container as a sidecar will have the option of reconfiguring when
+# this happens.
+signalpath="/walk"
+confpath="/data/vpn/wg0.conf"
+portpath="/data/vpn/port.dat"
+oldport=$(stat $portpath | sha256sum)
+touch $signalpath
+init_interval=.125
+init_timeout=2
+walk_interval=.5
+walk_timeout=10
+while [ -f /walk ]
+do
+  init_timeout=$(($init_timeout - $init_interval))
+  if [ ! $init_timeout -gt 0 ] && [ -f $signalpath ]; then
+    echo "Timed out while trying to walk."
+    exit 1
+  fi
+  sleep $init_interval
+done
+echo "Walk initiated."
+while [ $(stat $portpath | sha256sum) = $oldport ]
+do
+  walk_timeout=$(($walk_timeout - $walk_interval))
+  if [ ! $walk_timeout -gt 0 ]; then
+    echo "Timed out during walk. Walk again."
+    exit 1
+  fi
+  sleep $init_interval
+done
+echo "Walk complete."
+exit 0
