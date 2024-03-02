@@ -39,6 +39,4 @@
     - probably filesystem based switch
 - Evaluate the feasibility of implementing fastip in bash using xargs and ditching the C. It's kinda already implemented in this code, actually...
 
-
-
 This container was made possible by the hard work of the team at LinuxServer.io, and is heavily based on their alpine-base and wireguard containers.
