@@ -1,18 +1,42 @@
-This alpine-based wireguard client container is 25-45 megabytes, and includes tinyproxy running on port 8888, and a reliable ip checker called fastip.
-Build with
+### A wireguard client sidecar designed to offer specific features:
 
-```sudo docker build -t wireguard .```
-and use the included compose snippet.
+1) automatic port forwarding configuration
+    - forwarded ports are a core function of this client. it fails without a port.
+2) automatic configuration and failover from a list clients
+    - define a client according to its provider's schema:
 
-S6-overlay has been removed in favor of catatonit + multiservice signal proxying with bash.
+        ```
+        [{"Provider": "AirVPN",
+        "API": "abcdefg",
+        "Device": "WhatYouNamedIt",
+        "Port": 12345},
+        {"Provider": "PrivateInternetAccess",
+        "User": "p1234567",
+        "Password": "p@$$W0rD",
+        "PrivateKey": <a wireguard private key>}]
+        ```
+    - The above list just needs to be made the contents of /data/vpn/bucket.conf within the container
+    - The bucket.conf will be ignored if a wg0.conf exists
+3) pluggable provider system
+    - It should be possible to implement any provider that forwards ports. Check out the provider system code to see how.
+    - the extensible system should be able to support all kinds of port leasing quackery.
 
+4) a built-in, resilient public ip checker called fastip
+5) tinyproxy built in and active by default on port 8888
+6) pure bash entry loop
+7) pretty small
 
-While config ingestion is under construction, please mount your config directory directly into /etc/wireguard and define your vpn DNS in your docker up command.
+#### Future Goals
 
-If you would like to use your custom tinyproxy config, mount it over the default one at /data/tinyproxy/tinyproxy.conf
-
-It is advisable to manually modify the tinyproxy configuration to deny access from the VPN adapter until a script is implemented to do so.
+- More providers
+- Automatically make configurable http requests under certain conditions:
+    - make a get or post when the ip or port changes
+    - allow your tooling to listen for changes in realtime
+- Automatically populate change data via the filesystem
+    - your tooling can poll if it wants to
+- Change endpoints on demand
+    - would have to accept messaging of some kind.
+    - probably filesystem based switch
+- Evaluate the feasibility of implementing fastip in bash using xargs and ditching the C. It's kinda already implemented in this code, actually...
 
 This container was made possible by the hard work of the team at LinuxServer.io, and is heavily based on their alpine-base and wireguard containers.
-
-armhf is not yet supported.
