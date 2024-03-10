@@ -99,12 +99,22 @@ _connect () {
     # select a random provider to get started
     CONNECTION=${CONNECTIONS[$(($RANDOM % ${#CONNECTIONS[@]}))]}
     # import that provider to overload necessary functions
-    PROVIDER=$(echo "$CONNECTION" | jq -r '.Provider')
-    echo "The provider is $PROVIDER"
-    case "$PROVIDER" in
-        "PrivateInternetAccess" ) . /etc/vpn/provider/pia/pia.sh && export InitialPortForwardDone=false;;
-        "AirVPN" ) . /etc/vpn/provider/airvpn/airvpn.sh;;
-    esac;
+    VPN_PROVIDER=$(echo "$CONNECTION" | jq -r '.Provider' | tr '[:upper:]' '[:lower:]')
+    if [ -n "$VPN_PROVIDER" ]; then
+        echo "The provider is $VPN_PROVIDER"
+        provider_path="/etc/vpn/provider/${VPN_PROVIDER}"
+        if [ -f $provider_path ]; then
+            . $provider_path
+        else
+            echo "$VPN_PROVIDER is not a supported VPN provider."
+            echo "Select from one of these:"
+            echo
+            echo "$(ls //etc/vpn/provider/)"
+            exit
+        fi
+    else
+        echo "Provider is undefined. I can't proceed."
+    fi
     WG_CONFIG=$(_provider $CONNECTION)
     WG_CONFIG="${WG_CONFIG/"
 [Peer]"/PostUp = DROUTE=\$(ip route | grep default | awk "'{print \$3}'"); HOMENET=192.168.0.0/16; HOMENET2=172.16.0.0/12; ip route add \$HOMENET2 via \$DROUTE; ip route add \$HOMENET via \$DROUTE;iptables -I OUTPUT -d \$HOMENET -j ACCEPT;iptables -A OUTPUT -d \$HOMENET2 -j ACCEPT; iptables -A OUTPUT ! -o %i -m mark ! --mark \$(wg show %i fwmark) -m addrtype ! --dst-type LOCAL -j REJECT
@@ -120,6 +130,8 @@ PreDown = DROUTE=\$(ip route | grep default | awk "'{print \$3}'"); HOMENET=192.
         #wg-quick down wg0
         return 1
     else
+        ln -s /connection/port.dat /data/vpn/port.dat # temporary solution while we migrate to new connection data location
+        fastip > /connection/ip.dat
         CONNECTED=true
         log "CONNECTION SUCCESS!"
         #iptables -A INPUT -p tcp --dport $PORT -j ACCEPT

@@ -6,7 +6,7 @@
 # this happens.
 signalpath="/walk"
 confpath="/data/vpn/wg0.conf"
-portpath="/data/vpn/port.dat"
+portpath="/connection/port.dat"
 oldport=$(stat $portpath | sha256sum)
 touch $signalpath
 init_interval=.125
