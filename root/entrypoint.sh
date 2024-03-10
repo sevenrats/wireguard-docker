@@ -16,6 +16,14 @@ trap _term SIGQUIT
 trap _term SIGHUP
 
 # Configure stuff
+
+if [ -d "/connection" ]; then
+    rm -r /connection/*.dat
+else
+    # User didn't mount it, but we need it still
+    mkdir -p /connection
+fi
+
 for CONF in ${CONFS[@]}
     do
         if ! [ -f /data/"$CONF" ]; then

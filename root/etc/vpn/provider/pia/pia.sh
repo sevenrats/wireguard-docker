@@ -118,7 +118,7 @@ _pia_pf () {
         echo $pfinfo > "/etc/vpn/.pfinfo"
         if _bind_port; then
             echo "BIND PORT SUCCESS"
-            echo $PORT > "/data/vpn/port.dat"
+            echo $PORT > "/connection/port.dat"
             return 0
         else
             echo "BIND PORT FAILURE"

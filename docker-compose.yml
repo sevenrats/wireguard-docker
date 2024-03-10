@@ -2,7 +2,7 @@
 version: "3"
 services:
   vpn:
-    image: sevenrats/wireguard-client
+    image: sevenrats/wireguard-client:next
     container_name: vpn
     cap_add:
       - NET_ADMIN
@@ -13,7 +13,8 @@ services:
       - PGID=1000
       - TZ=Europe/London
     volumes:
-      - ./data/vpn:/data/vpn
+      - ./config/vpn/data:/data/vpn
+      - ./config/vpn/connection:/connection
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv6.conf.all.disable_ipv6=1

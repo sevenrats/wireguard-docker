@@ -16,6 +16,6 @@ _provider () {
     endpoint=$(echo $candidate | jq -r .ipv4_addr_in):$(echo $candidate | jq .multihop_port)
     allowedips="0.0.0.0/0"
     PORT=$(echo $account | jq -r --arg pubkey $PUBKEY '.account.wg_peers[] | select(.key.public==$pubkey ) | .city_ports[0].port')
-    echo $PORT > /data/vpn/port.dat
+    echo $PORT > /connection/port.dat
     echo "$(_configure $address $PRIVATEKEY $dns 15 $serverkey $endpoint $allowedips)"
 }

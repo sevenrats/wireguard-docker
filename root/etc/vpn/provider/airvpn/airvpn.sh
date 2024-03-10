@@ -7,7 +7,7 @@ _provider () {
     log "DEVICE: $DEVICE"
     PORT=$(echo "$1" | jq -r '.Port')
     log "PORT: $PORT"
-    
+
     all_servers=$(curl -s "https://airvpn.org/api/status/")
 
     # Don't connect to servers that we are already connected to
@@ -22,9 +22,9 @@ _provider () {
     log "Filtered server list: $filtered_servers"
     server="$(echo "$filtered_servers" | xargs -P 8 -I{} bash -c 'printServerLatency {}' | sort | head -1 | awk '{ print $2 }')"
     log "Selected server $server"
-    conf=$(curl -s -H "API-KEY:${API}" "https://airvpn.org/api/generator/?protocols=wireguard_1_udp_1637&servers=$server&device=$DEVICE&wireguard_mtu=0&wireguard_persistent_keepalive=15&iplayer_exit=ipv4")
+    conf=$(curl -s -H "API-KEY:${API}" "https://airvpn.org/api/generator/?protocols=wireguard_1_udp_1637&servers=${server}&device=${DEVICE}&wireguard_mtu=0&wireguard_persistent_keepalive=15&iplayer_exit=ipv4")
     log "Recording port $PORT"
-    echo $PORT > /data/vpn/port.dat
+    echo $PORT > /connection/port.dat
     log "Writing conf to wg0: $conf"
     echo "$conf"
 }
