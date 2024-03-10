@@ -121,6 +121,9 @@ _pia_pf () {
         if _bind_port; then
             echo "BIND PORT SUCCESS"
             echo $PORT > "/connection/port.dat"
+            # <The old, deprecated way.>
+            echo $PORT > /data/vpn/port.dat
+            # </deprecated>
             return 0
         else
             echo "BIND PORT FAILURE"

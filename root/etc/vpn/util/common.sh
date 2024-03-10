@@ -130,7 +130,6 @@ PreDown = DROUTE=\$(ip route | grep default | awk "'{print \$3}'"); HOMENET=192.
         #wg-quick down wg0
         return 1
     else
-        ln -s /connection/port.dat /data/vpn/port.dat # temporary solution while we migrate to new connection data location
         fastip > /connection/ip.dat
         CONNECTED=true
         log "CONNECTION SUCCESS!"
